@@ -13,6 +13,9 @@ Please cite the original paper when using any part of this code. BibTeX citation
 }
 ```
 
+## Videos of the robot experiments
+Available in our [EPFL Sycamore media space](https://mediaspace.epfl.ch/channel/Sycamore+Lab/49155).
+
 ## Acknowledgement
 This repository is modified from Mustafa Emre Gursoy's [repository](https://github.com/freddiefreeloader1/CCILQGames.git) for an EPFL semester project.
 
