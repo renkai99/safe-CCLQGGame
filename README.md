@@ -1,2 +1,18 @@
 # safe-CCLQGGame
-Simulation code and videos for the robot experiments for the paper "Chance-constrained Linear Quadratic Gaussian Games for Multi-robot  Interaction under Uncertainty"
+Simulation code and videos for the robot experiments for the paper "[Chance-constrained Linear Quadratic Gaussian Games for Multi-robot  Interaction under Uncertainty](https://arxiv.org/abs/2503.06776)"
+
+## References of the work
+Please cite the original paper when using any part of this code. BibTeX citation data:
+```
+@misc{ren2025chance,
+      title={Chance-constrained Linear Quadratic Gaussian Games for Multi-robot Interaction under Uncertainty}, 
+      author={Kai Ren and Giulio Salizzoni and Mustafa Emre Gürsoy and Maryam Kamgarpour},
+      year={2025},
+      eprint={2503.06776},
+      url={https://arxiv.org/abs/2503.06776}, 
+}
+```
+
+## Acknowledgement
+This repository is modified from Mustafa Emre Gursoy's [repository](https://github.com/freddiefreeloader1/CCILQGames.git) for an EPFL semester project.
+
