@@ -1,6 +1,11 @@
 # safe-CCLQGGame
 Simulation code and videos for the robot experiments for the paper "[Chance-constrained Linear Quadratic Gaussian Games for Multi-robot  Interaction under Uncertainty](https://arxiv.org/abs/2503.06776)"
 
+<p align="center">
+  <img src="https://github.com/renkai99/renkai99.github.io/blob/main/assets/img/publication_preview/multirobot.gif" width="45%" />
+</p>
+
+
 ## References of the work
 Please cite the original paper when using any part of this code. BibTeX citation data:
 ```
