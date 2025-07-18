@@ -1,5 +1,5 @@
 # safe-CCLQGGame
-[![DOI](https://img.shields.io/badge/DOI-10.48550/arXiv.2503.06776-green.svg)](https://doi.org/10.48550/arXiv.2503.06776) [![Preprint](https://img.shields.io/badge/Preprint-arXiv-blue.svg)](https://arxiv.org/abs/2503.06776)
+[![DOI](https://img.shields.io/badge/DOI-10.1109/LCSYS.2025.3588090-green.svg)](https://doi.org/10.1109/LCSYS.2025.3588090) [![Preprint](https://img.shields.io/badge/Preprint-arXiv-blue.svg)](https://arxiv.org/abs/2503.06776)
 
 Simulation code and videos for the robot experiments for the paper "[Chance-constrained Linear Quadratic Gaussian Games for Multi-robot Interaction under Uncertainty](https://arxiv.org/abs/2503.06776)"
 
