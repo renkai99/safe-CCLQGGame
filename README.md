@@ -11,13 +11,15 @@ Simulation code and videos for the robot experiments for the paper "[Chance-cons
 ## References of the work
 To cite our work in other academic papers, please use the following BibTex entry:
 ```
-@misc{ren2025chance,
-      title={Chance-constrained Linear Quadratic Gaussian Games for Multi-robot Interaction under Uncertainty}, 
-      author={Kai Ren and Giulio Salizzoni and Mustafa Emre Gürsoy and Maryam Kamgarpour},
-      year={2025},
-      eprint={2503.06776},
-      url={https://arxiv.org/abs/2503.06776}, 
-}
+@ARTICLE{Ren2025LCSS,
+  author={Ren, Kai and Salizzoni, Giulio and Gürsoy, Mustafa Emre and Kamgarpour, Maryam},
+  journal={IEEE Control Systems Letters}, 
+  title={Chance-Constrained Linear Quadratic Gaussian Games for Multi-Robot Interaction Under Uncertainty}, 
+  year={2025},
+  volume={},
+  number={},
+  pages={1-1},
+  doi={10.1109/LCSYS.2025.3588090}}
 ```
 
 ## Videos of the robot experiments
