@@ -24,6 +24,8 @@ class MonteCarloTest:
         if self.num_tests == 0:
             print("No Monte Carlo tests to run.")
             return
+        else:
+            print(f"Running {self.num_tests} Monte Carlo tests...")
 
         for test_num in range(self.num_tests):
             xs, control_inputs = self.mp_dynamics.compute_op_point(Ps, alphas, x_ref, prev_control_inputs, 0.02 , test_num, False)
@@ -74,3 +76,5 @@ class MonteCarloTest:
         print(f"\nAverage cost over {self.num_tests} tests: {avg_cost}")
         print(f"Standard deviation of cost: {std_cost}")
         print(f"Total collisions detected: {self.num_coll}")
+        print(f"------------------------------------------------------------------------")
+

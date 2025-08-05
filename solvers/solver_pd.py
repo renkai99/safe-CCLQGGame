@@ -60,6 +60,7 @@ class CLQGGpdSolver:
         end_time = time()
         print(f"Number of iterations: {self.iter}")
         print(f"Solver time: {end_time - start_time:.2f} seconds")
+        print(f"------------------------------------------------------------------------")
         return xs, prev_control_inputs, Ps, alphas,
 
     def _update_errors(self, xs):

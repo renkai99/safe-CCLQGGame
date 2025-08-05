@@ -27,6 +27,10 @@ class Configuration:
         self.Ps = np.zeros((self.mp_dynamics.num_agents, self.mp_dynamics.TIMESTEPS, 2, self.mp_dynamics.num_agents*4))
         self.alphas = np.zeros((self.mp_dynamics.num_agents, self.mp_dynamics.TIMESTEPS, 2))
 
+        print(f"Configuration initialized for scenario: {self.scenario}")
+        print(f"------------------------------------------------------------------------")
+
+
     def _initialize_robots(self):
         """Initialize robots based on the scenario."""
         sigma = [0.1, 0.1, 0.1, 0.1]
@@ -37,6 +41,13 @@ class Configuration:
             x_ref_1 = np.array([-2, -1.0, np.pi, 0])
             x_ref_2 = np.array([3, 1.0, 0, 0])
             x_ref_3 = np.array([-1, -3, -np.pi/2, 0])
+        elif self.scenario == "lane_changing":
+            x0_1 = [-3.0, -2.0, 0, 1.2]
+            x0_2 = [-3.1, 2.0, 0, 1.1]
+            x0_3 = [-3.0, 0.0, 0, 1.0]
+            x_ref_1 = np.array([2, 2, 0, 0])
+            x_ref_2 = np.array([2, -2, 0, 0])
+            x_ref_3 = np.array([3, 0, 0, 0])
         else:
             raise ValueError(f"Scenario {self.scenario} not supported.")
         
@@ -53,7 +64,8 @@ class Configuration:
 
     def _load_reference_trajectory(self):
         """Load the reference trajectory from a pickle file."""
-        with open('./Reference_trajectory/intersection_3car_ref.pkl', 'rb') as f:
+        file_name = f'./Reference_trajectory/{self.scenario}_3car_ref.pkl'
+        with open(file_name, 'rb') as f:
             parameters = pickle.load(f)
         self.xs = np.copy(parameters['xs'])
         self.control_inputs = np.copy(parameters['us'])
@@ -87,7 +99,10 @@ class Configuration:
         Other solvers coming soon (e.g., LCP, VI solvers).
         """
         if solver == 'PD':
+            print("Using Primal-dual solver")
             return CLQGGpdSolver(self.mp_dynamics, self.prox_cost_list, self.sigmas, prob=self.prob)
+        else:
+            raise ValueError(f"Solver {solver} not supported.")
 
     def get_monte_carlo_tester(self, num_monte_carlo_tests):
         """Initialize the Monte Carlo safety tester."""
@@ -101,7 +116,7 @@ class Configuration:
             np.array([[[1] * self.mp_dynamics.TIMESTEPS] * (self.mp_dynamics.num_agents - 1)] * self.mp_dynamics.num_agents) * 0.005,  # Is
         )
 
-    def get_plotter(self, xs):
+    def get_plotter(self, xs, output_type='gif'):
         """Initialize the trajectory plotter."""
-        return TrajectoryPlotter(xs, self.mp_dynamics, output_type='gif')
+        return TrajectoryPlotter(xs, self.mp_dynamics, self.scenario, output_type)
 

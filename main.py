@@ -2,7 +2,7 @@ from configuration import Configuration
 
 # Other solvers and scenes coming soon
 solver = 'PD'
-scene = 'intersection'
+scene = 'lane_changing' # 'lane_changing' or 'intersection'
 
 config = Configuration(scenario=scene)
 algorithm = config.get_algorithm(solver)
