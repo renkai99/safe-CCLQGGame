@@ -5,8 +5,8 @@ solver = 'PD'
 scene = 'intersection' # 'lane_changing' or 'intersection'
 
 # Two modes of reference trajectory: 
-# (1) known: known from file (same as in the paper): https://ieeexplore.ieee.org/document/11077446 
-# (2) iterative: iterative LQ game: https://ieeexplore.ieee.org/document/9197129
+# (1) known: with a given reference trajectory (as in our paper): https://ieeexplore.ieee.org/document/11077446 
+# (2) iterative: iterative LQ game (based on D.F.Keil 2020): https://ieeexplore.ieee.org/document/9197129
 ref_traj_type = 'iterative'  # 'knwon' or 'iterative'
 
 config = Configuration(scenario=scene, ref_traj_type=ref_traj_type)
