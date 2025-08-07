@@ -1,11 +1,13 @@
 import numpy as np
 from time import time
+import matplotlib.pyplot as plt
 from solve_lq_problem import solve_lq_game
 
 class CLQGGpdSolver:
-    def __init__(self, mp_dynamics, prox_cost_list, sigmas, prob, TOL_CC_ERROR=5e-2, phi=1.0):
+    def __init__(self, mp_dynamics, prox_cost_list, ref_traj_type, sigmas, prob, TOL_CC_ERROR=7e-2, phi=2.0):
         self.mp_dynamics = mp_dynamics
         self.prox_cost_list = prox_cost_list
+        self.ref_traj_type = ref_traj_type
         self.sigmas = sigmas
         self.prob = prob
         self.TOL_CC_ERROR = TOL_CC_ERROR
@@ -16,10 +18,10 @@ class CLQGGpdSolver:
         self.errors = [[[] for _ in range(mp_dynamics.num_agents - 1)] for _ in range(mp_dynamics.num_agents)]
         self.max_error = 100
         self.lambdas = np.zeros((mp_dynamics.num_agents, mp_dynamics.num_agents - 1, mp_dynamics.TIMESTEPS))
-        self.mu = np.array([[[1] * mp_dynamics.TIMESTEPS] * (mp_dynamics.num_agents - 1)] * mp_dynamics.num_agents) * 0.5
+        self.mu = np.array([[[1] * mp_dynamics.TIMESTEPS] * (mp_dynamics.num_agents - 1)] * mp_dynamics.num_agents) * 0.01
 
         # (Optional) for augmented Lagrangian
-        self.Is = np.array([[[1] * mp_dynamics.TIMESTEPS] * (mp_dynamics.num_agents - 1)] * mp_dynamics.num_agents) * 0.0
+        self.Is = np.array([[[1] * mp_dynamics.TIMESTEPS] * (mp_dynamics.num_agents - 1)] * mp_dynamics.num_agents) * 0.01        
 
     def run(self, xs, control_inputs, Ps, alphas, costs):
         """
@@ -34,28 +36,71 @@ class CLQGGpdSolver:
         """
         prev_control_inputs = control_inputs
         start_time = time()
+        current_points = np.copy(xs)
+        last_points = np.zeros_like(current_points)
+
+        plt.ion()
+        fig, ax = plt.subplots()
+        ax.set_xlim(-4, 4)
+        ax.set_ylim(-4, 4)
+        ax.grid(True)
+        colors = ['ro', 'go', 'bo', 'co', 'mo', 'yo']
 
         try:
             while self.max_error > self.TOL_CC_ERROR:
                 self._update_errors(xs)
                 self._update_lambdas()
                 self._update_mu()
+                if self.ref_traj_type == "known":
+                    xs, control_inputs = self.mp_dynamics.compute_op_point(
+                        Ps, alphas, xs, prev_control_inputs, 0.02, -1, False
+                    )
 
-                xs, control_inputs = self.mp_dynamics.compute_op_point(
-                    Ps, alphas, xs, prev_control_inputs, 0.02, -1, False
-                )
+                    Acs, Bcs, As, Bs = self.mp_dynamics.get_linearized_dynamics_for_initial_state(xs, control_inputs)
+                    Gs, qs, rhos = self.mp_dynamics.get_Gs(xs, self.prox_cost_list, self.sigmas)
+                    Qs, ls, Rs = self._compute_cost_matrices(xs, control_inputs, Gs, qs, rhos, costs)
 
-                Acs, Bcs, As, Bs = self.mp_dynamics.get_linearized_dynamics_for_initial_state(xs, control_inputs)
-                Gs, qs, rhos = self.mp_dynamics.get_Gs(xs, self.prox_cost_list, self.sigmas)
-                Qs, ls, Rs = self._compute_cost_matrices(xs, control_inputs, Gs, qs, rhos, costs)
+                    Ps, alphas = solve_lq_game(As, Bs, Qs, ls, Rs)
+                    prev_control_inputs = control_inputs
 
-                Ps, alphas = solve_lq_game(As, Bs, Qs, ls, Rs)
-                prev_control_inputs = control_inputs
+                    self.iter += 1
+                else:
+                    flag = False
+                    while not flag:
+                        self._update_errors(xs)
+                        xs, control_inputs = self.mp_dynamics.compute_op_point(
+                            Ps, alphas, xs, prev_control_inputs, 0.02, -1, False
+                        )
+                        ax.clear()
+                        ax.grid(True)
+                        ax.set_xlim(-4, 4)
+                        ax.set_ylim(-4, 4)
 
-                self.iter += 1
+                        # get the first elements of xs
+                        for i in range(self.mp_dynamics.num_agents):
+                            ax.plot([x[0] for x in xs[i]], [x[1] for x in xs[i]], colors[i], label=f'Robot {i}', markersize=5)
+
+                        plt.pause(0.01)
+                        plt.show()
+                        last_points = np.copy(current_points)
+                        current_points = np.copy(xs)
+
+                        Acs, Bcs, As, Bs = self.mp_dynamics.get_linearized_dynamics_for_initial_state(xs, control_inputs)
+                        Gs, qs, rhos = self.mp_dynamics.get_Gs(xs, self.prox_cost_list, self.sigmas)
+                        Qs, ls, Rs = self._compute_cost_matrices(xs, control_inputs, Gs, qs, rhos, costs)
+
+                        Ps, alphas = solve_lq_game(As, Bs, Qs, ls, Rs)
+                        prev_control_inputs = control_inputs
+
+                        self.iter += 1
+                        if self.iter > 1:
+                            flag = self.mp_dynamics.check_convergence(current_points, last_points)  
 
         except KeyboardInterrupt:
             print("Algorithm interrupted.")
+
+        plt.ioff()
+        plt.close()
 
         end_time = time()
         print(f"Number of iterations: {self.iter}")

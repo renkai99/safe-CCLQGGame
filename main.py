@@ -2,9 +2,14 @@ from configuration import Configuration
 
 # Other solvers and scenes coming soon
 solver = 'PD'
-scene = 'lane_changing' # 'lane_changing' or 'intersection'
+scene = 'intersection' # 'lane_changing' or 'intersection'
 
-config = Configuration(scenario=scene)
+# Two modes of reference trajectory: 
+# (1) known: known from file (same as in the paper): https://ieeexplore.ieee.org/document/11077446 
+# (2) iterative: iterative LQ game: https://ieeexplore.ieee.org/document/9197129
+ref_traj_type = 'iterative'  # 'knwon' or 'iterative'
+
+config = Configuration(scenario=scene, ref_traj_type=ref_traj_type)
 algorithm = config.get_algorithm(solver)
 xs, us, Ps, alphas = algorithm.run(config.xs, config.control_inputs, config.Ps, config.alphas, config.costs)
 

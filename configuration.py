@@ -9,13 +9,14 @@ from Montecarlo_test import MonteCarloTest
 from Costs import ProximityCost
 
 class Configuration:
-    def __init__(self, scenario="intersection", dt=0.2, horizon=10, ref_cost_threshold=20, collision_dist=1.0, prob=0.95):
+    def __init__(self, scenario="intersection", ref_traj_type="known", dt=0.2, horizon=10, ref_cost_threshold=20, collision_dist=0.8, prob=0.95):
         self.dt = dt
         self.horizon = horizon
         self.ref_cost_threshold = ref_cost_threshold
         self.collision_dist = collision_dist
         self.prob = prob
         self.scenario = scenario
+        self.ref_traj_type = ref_traj_type
         self.identity_size = 4
 
         self._initialize_robots()
@@ -63,16 +64,26 @@ class Configuration:
         self.costs = self.mp_dynamics.define_costs_lists(uncertainty=True)
 
     def _load_reference_trajectory(self):
-        """Load the reference trajectory from a pickle file."""
-        file_name = f'./Reference_trajectory/{self.scenario}_3car_ref.pkl'
-        with open(file_name, 'rb') as f:
-            parameters = pickle.load(f)
-        self.xs = np.copy(parameters['xs'])
-        self.control_inputs = np.copy(parameters['us'])
-        self.prev_control_inputs = np.copy(parameters['us'])
-        self.Acs, self.Bcs, self.As, self.Bs = self.mp_dynamics.get_linearized_dynamics_for_initial_state(
-            self.xs, self.control_inputs
-        )
+        if self.ref_traj_type == "known":
+            """Load the reference trajectory from a pickle file."""
+            file_name = f'./Reference_trajectory/{self.scenario}_3car_ref.pkl'
+            with open(file_name, 'rb') as f:
+                parameters = pickle.load(f)
+            self.xs = np.copy(parameters['xs'])
+            self.control_inputs = np.copy(parameters['us'])
+            self.prev_control_inputs = np.copy(parameters['us'])
+            self.Acs, self.Bcs, self.As, self.Bs = self.mp_dynamics.get_linearized_dynamics_for_initial_state(
+                self.xs, self.control_inputs
+            )
+        else:
+            u1 = [[0]*self.mp_dynamics.TIMESTEPS for agent in self.mp_dynamics.agent_list]
+            u2 = [[0]*self.mp_dynamics.TIMESTEPS for agent in self.mp_dynamics.agent_list]
+            self.prev_control_inputs = np.zeros((self.mp_dynamics.num_agents, self.mp_dynamics.TIMESTEPS, 2))
+            self.control_inputs = np.zeros((self.mp_dynamics.num_agents, self.mp_dynamics.TIMESTEPS, 2))
+            self.xs = self.mp_dynamics.integrate_dynamics_for_initial_mp(u1, u2, self.mp_dynamics.dt, False)
+            self.Acs, self.Bcs, self.As, self.Bs = self.mp_dynamics.get_linearized_dynamics_for_initial_state(
+                self.xs, self.control_inputs
+            )
 
     def _initialize_sigmas(self):
         """Initialize the uncertainty covariance matrices."""
@@ -100,7 +111,7 @@ class Configuration:
         """
         if solver == 'PD':
             print("Using Primal-dual solver")
-            return CLQGGpdSolver(self.mp_dynamics, self.prox_cost_list, self.sigmas, prob=self.prob)
+            return CLQGGpdSolver(self.mp_dynamics, self.prox_cost_list, self.ref_traj_type, self.sigmas, prob=self.prob)
         else:
             raise ValueError(f"Solver {solver} not supported.")
 

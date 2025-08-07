@@ -14,8 +14,7 @@ class TrajectoryPlotter:
         self.x_traj = [[] for _ in range(mp_dynamics.num_agents)]
         self.y_traj = [[] for _ in range(mp_dynamics.num_agents)]
         self.headings = [[] for _ in range(mp_dynamics.num_agents)]
-        self.width = 0.5
-        self.height = 0.3
+        self.width = 0.4
         self.colors = ['r', 'g', 'b', 'c', 'm', 'y']
         self.collect_trajectories()
 
