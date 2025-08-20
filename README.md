@@ -16,9 +16,9 @@ To cite our work in other academic papers, please use the following BibTex entry
   journal={IEEE Control Systems Letters}, 
   title={Chance-Constrained Linear Quadratic Gaussian Games for Multi-Robot Interaction Under Uncertainty}, 
   year={2025},
-  volume={},
+  volume={9},
   number={},
-  pages={1-1},
+  pages={2061-2066},
   doi={10.1109/LCSYS.2025.3588090}}
 ```
 
