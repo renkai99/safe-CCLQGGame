@@ -195,7 +195,7 @@ class MonteCarloTest:
 
         # Add a single legend for each agent with the base color
         for agent_idx in range(xs_history[0].shape[0]):
-            ax.plot([], [], color=colors[agent_idx % len(colors)], label=f"Agent {agent_idx}")
+            ax.plot([], [], color=colors[agent_idx % len(colors)], label=f"Agent {agent_idx+1}")
 
         # Add a magnified inset
 
