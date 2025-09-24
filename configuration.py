@@ -118,6 +118,7 @@ class Configuration:
     def get_monte_carlo_tester(self, num_monte_carlo_tests):
         """Initialize the Monte Carlo safety tester."""
         return MonteCarloTest(
+            self.scenario,
             self.mp_dynamics,
             num_monte_carlo_tests,
             self.collision_dist,
